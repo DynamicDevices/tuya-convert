@@ -97,20 +97,20 @@ while true; do
 
 	pkill -f smartconfig/main.py && echo "Stopping smart config"
 
-	echo "Fetching firmware backup"
+#	echo "Fetching firmware backup"
 	sleep 2
 	timestamp=$(date +%Y%m%d_%H%M%S)
 	backupfolder="../backups/$timestamp"
 	mkdir -p "$backupfolder"
 	pushd "$backupfolder" >/dev/null || exit
 
-	if ! curl -JOm 90 http://10.42.42.42/backup; then
-		echo "Could not fetch a complete backup"
-		read -p "Do you want to continue anyway? [y/N] " -n 1 -r
-		echo
-		[[ "$REPLY" =~ ^[Yy]$ ]] || break
-		sleep 2
-	fi
+#	if ! curl -JOm 90 http://10.42.42.42/backup; then
+#		echo "Could not fetch a complete backup"
+#		read -p "Do you want to continue anyway? [y/N] " -n 1 -r
+#		echo
+#		[[ "$REPLY" =~ ^[Yy]$ ]] || break
+#		sleep 2
+#	fi
 
 	echo "======================================================"
 	echo "Getting Info from IoT-device"
@@ -120,15 +120,21 @@ while true; do
 	echo "======================================================"
 	echo "Ready to flash third party firmware!"
 	echo
-	echo "For your convenience, the following firmware images are already included in this repository:"
-	echo "  Tasmota v8.1.0.2 (wifiman)"
-	echo "  ESPurna 1.13.5 (base)"
-	echo
-	echo "You can also provide your own image by placing it in the /files directory"
-	echo "Please ensure the firmware fits the device and includes the bootloader"
-	echo "MAXIMUM SIZE IS 512KB"
+#	echo "For your convenience, the following firmware images are already included in this repository:"
+#	echo "  Tasmota v8.1.0.2 (wifiman)"
+#	echo "  ESPurna 1.13.5 (base)"
+#	echo
+#	echo "You can also provide your own image by placing it in the /files directory"
+#	echo "Please ensure the firmware fits the device and includes the bootloader"
+#	echo "MAXIMUM SIZE IS 512KB"
+#
+#	./firmware_picker.sh
 
-	./firmware_picker.sh
+        RESULT=$(curl -s "http://10.42.42.42/flash?url=http://10.42.42.1/files/tasmota.bin") ||
+        echo "Could not reach the device!"
+
+        echo "$RESULT"
+
 	sudo mv *.log "$backupfolder/"
 
 	echo "======================================================"
